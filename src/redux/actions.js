@@ -8,22 +8,3 @@ export function userAdded(description) {
         }
     }
 }
-
-// export function bugRemoved() {
-//     return {
-//         type: actions.BUG_REMOVED,
-//         payload: {
-//             id : 1
-//         }
-//     }
-// }
-
-// export function bugResolved(id) {
-//     return {
-//         type: actions.BUG_RESOLVED,
-//         payload: {
-//             id,
-//             resolved: true
-//         }
-//     }
-// }
