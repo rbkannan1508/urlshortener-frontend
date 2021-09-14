@@ -3,6 +3,7 @@ import { Button } from "react-bootstrap";
 import axios from 'axios';
 import Navigationbar from "./navigationbar.component";
 import Loader from 'react-loader-spinner';
+import { useSelector } from 'react-redux';
 
 const UrlList = (props) => {
     const isLoading = false;
@@ -15,17 +16,21 @@ const UrlList = (props) => {
     const [state, setState] = useState(initState);
     const [spinner, isLoadingSpinner] = React.useState(isLoading);
 
+    const userDetail = useSelector((state) => state.userInfo);
+    const account_email = userDetail && userDetail.email ? userDetail.email : '';
+
     useEffect(() => {
-        getUrlList();
+        console.log('account_email', account_email);
+        getUrlList(account_email);
     }, [])
 
-    const getUrlList = () => {
+    const getUrlList = (emailDetail) => {
         isLoadingSpinner(true);
-        const email = sessionStorage.getItem('email');
+        const email = emailDetail;
         axios.request({
             baseURL: 'http://localhost:3010',
             method: 'POST',
-            url: 'listAllShortenedUrls',
+            url: '/api/list-all-shortenedurls',
             data: {
                 email: email
             },
@@ -46,12 +51,12 @@ const UrlList = (props) => {
         axios.request({
             baseURL: 'http://localhost:3010',
             method: 'GET',
-            url: `/deleteUrl/${urlkey}`,
+            url: `/api/delete-url/${urlkey}`,
             withCredentials:true
         }).then((response) => {
             isLoadingSpinner(false);
             console.log('Response from API call', response && response.data);
-            getUrlList();
+            getUrlList(account_email);
         }).catch((error) => {
             isLoadingSpinner(false);
             console.error('Error from API call', error);
@@ -62,11 +67,10 @@ const UrlList = (props) => {
         isLoadingSpinner(true);
         event.preventDefault();
         const urlkey = event.target.id;
-        console.log('urlkey',urlkey);
         axios.request({
             baseURL: 'http://localhost:3010',
             method: 'GET',
-            url: `/redirect/${urlkey}`,
+            url: `/api/redirect/${urlkey}`,
             withCredentials:true
         }).then((response) => {
             isLoadingSpinner(false);
@@ -96,7 +100,7 @@ const UrlList = (props) => {
             {
                 state && state.length > 0 ? 
                 <div style={{margin: '50px'}}>
-                <table style={{width: '100%', border: '1px solid black'}} id='urlData'>
+                <table style={{whiteSpace: 'nowrap', width: '100%', border: '1px solid black'}} id='urlData'>
                     <tbody>
                         <tr>
                             <th style={{border: '1px solid black', textAlign: 'center'}}>Original URL</th>

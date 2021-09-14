@@ -3,7 +3,7 @@ import { Modal, Button } from "react-bootstrap";
 import Navigationbar from "./navigationbar.component";
 import Loader from 'react-loader-spinner';
 import axios from 'axios';
-import store from "../redux/store";
+import { useSelector } from 'react-redux';
 
 const initialFormData = Object.freeze({
    username: '',
@@ -13,9 +13,10 @@ const initialFormData = Object.freeze({
    originalUrl: ''
 });
 const isLoading = false;
-
+const setObject = {};
 const Profile = (props) => {
    const [formData, updateFormData] = React.useState(initialFormData);
+   const [spinner, isLoadingSpinner] = React.useState(isLoading);
 
    const [showModal, setShow] = useState(false);
    const [showURLModal, setURLShow] = useState(false);
@@ -26,6 +27,8 @@ const Profile = (props) => {
    const handleURLClose = () => setURLShow(false);
    const handleURLShow = () => setURLShow(true);
 
+   const userDetail = useSelector((state) => state.userInfo);
+
    const handleChange = (event) => {
         updateFormData({
             ...formData,
@@ -33,28 +36,24 @@ const Profile = (props) => {
           });
    }
 
-   const [spinner, isLoadingSpinner] = React.useState(isLoading);
-
    const clearForm = (formData) => {
       formData.username = '',
       formData.phone = '',
       formData.email = '',
       formData.password = '',
       formData.originalUrl = ''
-      console.log('Reaching here clearForm', formData);
       return formData;
    }
 
    const handleSubmit = (event) => {
-      const setObject = {};
-      const account_email = sessionStorage.getItem('email');
+      const account_email = userDetail && userDetail.email ? userDetail.email : '';
       if(event.target.name === 'urlsubmit') {
          isLoadingSpinner(true);
          setObject.originalUrl = formData.originalUrl;
          axios.request({
             baseURL: 'http://localhost:3010',
             method: 'POST',
-            url: `/shortenurl`,
+            url: `/api/shorten-url`,
             data: {
                url: setObject.originalUrl,
                email: account_email
@@ -80,7 +79,7 @@ const Profile = (props) => {
          axios.request({
             baseURL: 'http://localhost:3010',
             method: 'POST',
-            url: `/addNewUser`,
+            url: `/api/add-new-user`,
             data: {
                username: setObject.username,
                phone: setObject.phone,
@@ -101,13 +100,7 @@ const Profile = (props) => {
          });
       }
       clearForm(formData);
-    }
-
-   useEffect(() => {
-      store.subscribe(()=>{ 
-         console.log('store', store.getState());
-      });
-   }, []);
+   }
 
    return (
       <React.Fragment>
@@ -117,7 +110,7 @@ const Profile = (props) => {
                <div className="row">
                   <div className="col-sm-6 text-black">
                      <div className="px-1">
-                        <span className="h2 fw">Welcome { props.location && props.location.state ? props.location.state.username : '' }</span>
+                        <span className="h2 fw">Welcome { userDetail && userDetail.username !== null ? userDetail.username : '' }</span>
                      </div>
 
                      <div className="d-flex" style={{ height: "7vh", marginTop: "5vh" }}>

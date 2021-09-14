@@ -6,7 +6,6 @@ const Redirect = (props) => {
 
     useEffect(() => {
         const pathname = window.location.pathname.substr(10);
-        console.log('let pathname = this.props.location.pathname.substr(1)', pathname);
         redirectURL(pathname !== null ? pathname : '');
     }, []);
 
@@ -14,7 +13,7 @@ const Redirect = (props) => {
         axios.request({
             baseURL: 'http://localhost:3010',
             method: 'GET',
-            url: `/redirect/${pathname}`,
+            url: `/api/redirect/${pathname}`,
             withCredentials:true
         }).then((response) => {
             console.log('Response from API call', response && response.data);

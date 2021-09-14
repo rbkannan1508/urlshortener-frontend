@@ -1,28 +1,29 @@
 import React, { useEffect } from 'react';
 import { Navbar, Nav, NavDropdown, Container } from 'react-bootstrap';
 import Cookies from 'js-cookie';
+import { clearState } from '../app/localStorage/localStorage';
+import { useSelector } from 'react-redux';
 
 const Navigationbar = (props) => {
 
     const initialName = '';
     const [name, setName] = React.useState(initialName);
 
+    const userDetail = useSelector((state) => state.userInfo);
+
     const logoutFunction = () => {
         Cookies.remove('token');
-        sessionStorage.removeItem('email');
-        sessionStorage.removeItem('userId');
-        sessionStorage.removeItem('accountId');
+        clearState();
         props.history.push('/');
     }
 
     useEffect(() => {
-        const username = sessionStorage.getItem('username');
+        const username = userDetail && userDetail.username ? userDetail.username : '';
         setName('Welcome ' + username);
-    },[]);
+    });
 
     const redirectTab = (event) => {
         event.preventDefault();
-        console.log('event', event.target.id);
         if(event.target.id === 'user-list') {
             props.history.push('/listUsers');
         } else if(event.target.id === 'url-list'){

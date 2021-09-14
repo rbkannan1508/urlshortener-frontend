@@ -1,6 +1,8 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
+import { userAdded } from '../app/redux/actions';
+import { useDispatch } from 'react-redux';
 
 const initialFormData = Object.freeze({
     username: '',
@@ -11,6 +13,7 @@ const initialFormData = Object.freeze({
 });
 
 const Signup = (props) => {
+    const dispatch = useDispatch();
     const [formData, updateFormData] = React.useState(initialFormData);
 
     const handleChange = (event) => {
@@ -22,11 +25,10 @@ const Signup = (props) => {
 
     const handleSubmit = (event) => {
         event.preventDefault();
-        console.log('reaching here', formData);
         axios.request({
             baseURL: 'http://localhost:3010',
             method: 'POST',
-            url: 'signupSubmit',
+            url: '/api/signup-submit',
             data: {
                 username: formData.username,
                 phone: formData.phone,
@@ -41,9 +43,13 @@ const Signup = (props) => {
                 pathname: '/profile',
                 state: response.data
             });
-            sessionStorage.setItem('email', response.data.email);
-            sessionStorage.setItem('accountId', response.data.accountId);
-            sessionStorage.setItem('userId', response.data.userId);
+            const userDetails = {
+                'email': response.data.email,
+                'accountId': response.data.accountId,
+                'userId': response.data.userId,
+                'username': response.data.username
+            };
+            dispatch(userAdded(userDetails));
         }).catch((error) => {
             console.error('Error from API call', error);
         });

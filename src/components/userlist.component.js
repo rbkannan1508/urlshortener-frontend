@@ -2,7 +2,6 @@ import React, {useState, useEffect} from 'react';
 import axios from 'axios';
 import Navigationbar from "./navigationbar.component";
 import Loader from 'react-loader-spinner';
-import store from "../redux/store";
 
 const UserList = (props) => {
     const initState = [
@@ -25,13 +24,12 @@ const UserList = (props) => {
         axios.request({
             baseURL: 'http://localhost:3010',
             method: 'GET',
-            url: 'listAllUsers',
+            url: '/api/list-all-users',
             withCredentials:true
         }).then((response) => {
             isLoadingSpinner(false);
             console.log('Response from API call', response && response.data);
             let userList = response.data ? response.data : [];
-            console.log('userList', userList);
             setState(userList);
         }).catch((error) => {
             isLoadingSpinner(false);
@@ -40,16 +38,6 @@ const UserList = (props) => {
     }
 
     useEffect(() => {
-        const state = store.getState();
-        console.log('state', state);
-        const stateObject = {};
-        if(state && state[0]) {
-            stateObject.userId = state[0].userId;
-            stateObject.accountId = state[0].accountId;
-            stateObject.email = state[0].email;
-            stateObject.username = state[0].username;
-        }
-        console.log('stateObject', stateObject);
         getUserList();
     }, [])
 
@@ -70,7 +58,7 @@ const UserList = (props) => {
             {
                 state && state.length > 0 ? 
                 <div style={{margin: '50px'}}>
-                <table style={{width: '100%', border: '1px solid black'}} id='urlData'>
+                <table style={{whiteSpace: 'nowrap', width: '100%', border: '1px solid black'}} id='urlData'>
                     <tbody>
                         <tr>
                             <th style={{border: '1px solid black', textAlign: 'center'}}>ID</th>

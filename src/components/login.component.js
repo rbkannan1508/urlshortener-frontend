@@ -2,8 +2,8 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
 import Loader from 'react-loader-spinner';
-import store from '../redux/store';
-import { userAdded } from '../redux/actions';
+import { userAdded } from '../app/redux/actions';
+import { useDispatch } from 'react-redux';
 
 const initialFormData = Object.freeze({
     email: "",
@@ -15,6 +15,7 @@ const initialErrorMsg = "";
 const isLoading = false;
 
 const Login = (props)  => {
+    const dispatch = useDispatch();
     const [formData, updateFormData] = React.useState(initialFormData);
 
     const [errorMsg, triggerMsg] = React.useState(initialErrorMsg);
@@ -31,11 +32,10 @@ const Login = (props)  => {
     const handleSubmit = (event) => {
         isLoadingSpinner(true);
         event.preventDefault();
-        console.log('reaching here', formData);
         axios.request({
             baseURL: 'http://localhost:3010',
             method: 'POST',
-            url: 'loginSubmit',
+            url: '/api/login-submit',
             data: {
                 email: formData.email,
                 password: formData.password
@@ -50,16 +50,13 @@ const Login = (props)  => {
                     pathname: '/profile',
                     state: response.data
                 });
-                store.dispatch(userAdded({
+                const userDetails = {
                     'email': response.data.email,
                     'accountId': response.data.accountId,
                     'userId': response.data.userId,
                     'username': response.data.username
-                }));
-                sessionStorage.setItem('email', response.data.email);
-                sessionStorage.setItem('accountId', response.data.accountId);
-                sessionStorage.setItem('userId', response.data.userId);
-                sessionStorage.setItem('username', response.data.username);
+                };
+                dispatch(userAdded(userDetails));
             } else if(response.data.message === 'Authentication Failure') {
                 triggerMsg('Authentication Error');
             }
