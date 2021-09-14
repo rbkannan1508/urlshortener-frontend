@@ -13,7 +13,7 @@ const Redirect = (props) => {
         axios.request({
             baseURL: 'http://localhost:3010',
             method: 'GET',
-            url: `/api/redirect/${pathname}`,
+            url: `redirect/${pathname}`,
             withCredentials:true
         }).then((response) => {
             console.log('Response from API call', response && response.data);

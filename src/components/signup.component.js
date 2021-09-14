@@ -28,7 +28,7 @@ const Signup = (props) => {
         axios.request({
             baseURL: 'http://localhost:3010',
             method: 'POST',
-            url: '/api/signup-submit',
+            url: '/signup-submit',
             data: {
                 username: formData.username,
                 phone: formData.phone,

@@ -24,7 +24,7 @@ const UserList = (props) => {
         axios.request({
             baseURL: 'http://localhost:3010',
             method: 'GET',
-            url: '/api/list-all-users',
+            url: '/list-all-users',
             withCredentials:true
         }).then((response) => {
             isLoadingSpinner(false);

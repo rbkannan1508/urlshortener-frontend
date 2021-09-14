@@ -5,6 +5,10 @@ import Navigationbar from "./navigationbar.component";
 import Loader from 'react-loader-spinner';
 import { useSelector } from 'react-redux';
 
+const initialFormData = Object.freeze({
+    search: ""
+});
+
 const UrlList = (props) => {
     const isLoading = false;
     const initState = [
@@ -13,6 +17,7 @@ const UrlList = (props) => {
             tinyUrl: ''
         }
     ];
+    const [formData, updateFormData] = React.useState(initialFormData);
     const [state, setState] = useState(initState);
     const [spinner, isLoadingSpinner] = React.useState(isLoading);
 
@@ -24,13 +29,20 @@ const UrlList = (props) => {
         getUrlList(account_email);
     }, [])
 
+    const handleChange = (event) => {
+        updateFormData({
+            ...formData,
+            [event.target.name]: event.target.value.trim()
+          });
+    }
+
     const getUrlList = (emailDetail) => {
         isLoadingSpinner(true);
         const email = emailDetail;
         axios.request({
             baseURL: 'http://localhost:3010',
             method: 'POST',
-            url: '/api/list-all-shortenedurls',
+            url: '/list-all-shortenedurls',
             data: {
                 email: email
             },
@@ -51,7 +63,7 @@ const UrlList = (props) => {
         axios.request({
             baseURL: 'http://localhost:3010',
             method: 'GET',
-            url: `/api/delete-url/${urlkey}`,
+            url: `/delete-url/${urlkey}`,
             withCredentials:true
         }).then((response) => {
             isLoadingSpinner(false);
@@ -70,13 +82,33 @@ const UrlList = (props) => {
         axios.request({
             baseURL: 'http://localhost:3010',
             method: 'GET',
-            url: `/api/redirect/${urlkey}`,
+            url: `/redirect/${urlkey}`,
             withCredentials:true
         }).then((response) => {
             isLoadingSpinner(false);
             console.log('Response from API call', response && response.data);
             let urlToRedirect = response && response.data;
             window.open(urlToRedirect, '_blank').focus();
+        }).catch((error) => {
+            isLoadingSpinner(false);
+            console.error('Error from API call', error);
+        });
+    }
+
+    const searchURL = () => {
+        const searchInput = document.getElementById('search-input');
+        let inputValue = searchInput.value;
+        console.log('inputValue', inputValue);
+        isLoadingSpinner(true);
+        axios.request({
+            baseURL: 'http://localhost:3010',
+            method: 'GET',
+            url: `/search-url`,
+            withCredentials:true
+        }).then((response) => {
+            isLoadingSpinner(false);
+            inputValue = '';
+            console.log('Response from API call', response && response.data);
         }).catch((error) => {
             isLoadingSpinner(false);
             console.error('Error from API call', error);
@@ -94,6 +126,14 @@ const UrlList = (props) => {
             <div className="px-1">
                 <span className="h2 fw">URL List</span>
             </div>
+            
+            <br></br>
+
+            <div className="input-group">
+                <input type="search" id="search-input" className="form-control rounded" placeholder="Search" aria-label="Search" aria-describedby="search-addon" />
+                <button type="button" id="search-button" className="btn btn-outline-primary" onClick={searchURL}>search</button>
+            </div>
+
             {
                 spinner ? <Loader type="Circles" color="#16fffb" height="75" width="100" /> : <div></div>
             }

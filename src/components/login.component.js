@@ -35,7 +35,7 @@ const Login = (props)  => {
         axios.request({
             baseURL: 'http://localhost:3010',
             method: 'POST',
-            url: '/api/login-submit',
+            url: '/login-submit',
             data: {
                 email: formData.email,
                 password: formData.password

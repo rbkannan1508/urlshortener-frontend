@@ -53,7 +53,7 @@ const Profile = (props) => {
          axios.request({
             baseURL: 'http://localhost:3010',
             method: 'POST',
-            url: `/api/shorten-url`,
+            url: `/shorten-url`,
             data: {
                url: setObject.originalUrl,
                email: account_email
@@ -79,7 +79,7 @@ const Profile = (props) => {
          axios.request({
             baseURL: 'http://localhost:3010',
             method: 'POST',
-            url: `/api/add-new-user`,
+            url: `/add-new-user`,
             data: {
                username: setObject.username,
                phone: setObject.phone,
