@@ -44,24 +44,21 @@ const Login = (props)  => {
         }).then((response) => {
             isLoadingSpinner(false);
             console.log('Response from API call', response && response.data);
-            if(response.data.message === 'Authentication Successful') {
-                triggerMsg(initialErrorMsg);
-                props.history.push({
-                    pathname: '/profile',
-                    state: response.data
-                });
-                const userDetails = {
-                    'email': response.data.email,
-                    'accountId': response.data.accountId,
-                    'userId': response.data.userId,
-                    'username': response.data.username
-                };
-                dispatch(userAdded(userDetails));
-            } else if(response.data.message === 'Authentication Failure') {
-                triggerMsg('Authentication Error');
-            }
+            triggerMsg(initialErrorMsg);
+            props.history.push({
+                pathname: '/profile',
+                state: response.data
+            });
+            const userDetails = {
+                'email': response.data.email,
+                'accountId': response.data.accountId,
+                'userId': response.data.userId,
+                'username': response.data.username
+            };
+            dispatch(userAdded(userDetails));
         }).catch((error) => {
             isLoadingSpinner(false);
+            triggerMsg('Authentication Error');
             console.error('Error from API call', error);
         });
     }

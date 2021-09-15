@@ -170,7 +170,7 @@ const Profile = (props) => {
 
                      <Modal show={showURLModal} onHide={handleURLClose}>
                      <Modal.Header closeButton>
-                        <Modal.Title>Add New User</Modal.Title>
+                        <Modal.Title>Shorten a URL</Modal.Title>
                      </Modal.Header>
                      <Modal.Body>
                      <form id="login">

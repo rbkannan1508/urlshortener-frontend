@@ -15,8 +15,10 @@ const UserList = (props) => {
             accountId: ''
         }
     ];
+    const initialErrorMsg = "";
     const isLoading = false;
     const [state, setState] = useState(initState);
+    const [errorMsg, triggerMsg] = React.useState(initialErrorMsg);
     const [spinner, isLoadingSpinner] = React.useState(isLoading);
 
     const getUserList = () => {
@@ -27,11 +29,13 @@ const UserList = (props) => {
             url: '/list-all-users',
             withCredentials:true
         }).then((response) => {
+            triggerMsg(initialErrorMsg);
             isLoadingSpinner(false);
             console.log('Response from API call', response && response.data);
             let userList = response.data ? response.data : [];
             setState(userList);
         }).catch((error) => {
+            triggerMsg('API Error');
             isLoadingSpinner(false);
             console.error('Error from API call', error);
         });
@@ -52,6 +56,9 @@ const UserList = (props) => {
             <div className="px-1">
                 <span className="h2 fw">User List</span>
             </div>
+            
+            {errorMsg}
+
             {
                 spinner ? <Loader type="Circles" color="#16fffb" height="75" width="100" /> : <div></div>
             }

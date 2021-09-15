@@ -8,7 +8,7 @@ import { useSelector } from 'react-redux';
 const initialFormData = Object.freeze({
     search: ""
 });
-
+const initialErrorMsg = "";
 const UrlList = (props) => {
     const isLoading = false;
     const initState = [
@@ -19,6 +19,7 @@ const UrlList = (props) => {
     ];
     const [formData, updateFormData] = React.useState(initialFormData);
     const [state, setState] = useState(initState);
+    const [errorMsg, triggerMsg] = React.useState(initialErrorMsg);
     const [spinner, isLoadingSpinner] = React.useState(isLoading);
 
     const userDetail = useSelector((state) => state.userInfo);
@@ -27,14 +28,7 @@ const UrlList = (props) => {
     useEffect(() => {
         console.log('account_email', account_email);
         getUrlList(account_email);
-    }, [])
-
-    const handleChange = (event) => {
-        updateFormData({
-            ...formData,
-            [event.target.name]: event.target.value.trim()
-          });
-    }
+    }, []);
 
     const getUrlList = (emailDetail) => {
         isLoadingSpinner(true);
@@ -49,11 +43,13 @@ const UrlList = (props) => {
             withCredentials:true
         }).then((response) => {
             isLoadingSpinner(false);
+            triggerMsg(initialErrorMsg);
             console.log('Response from API call', response && response.data);
             let urlList = response.data ? response.data : [];
             setState(urlList);
         }).catch((error) => {
             isLoadingSpinner(false);
+            triggerMsg('Error from API call');
             console.error('Error from API call', error);
         });
     }
@@ -67,10 +63,12 @@ const UrlList = (props) => {
             withCredentials:true
         }).then((response) => {
             isLoadingSpinner(false);
+            triggerMsg(initialErrorMsg);
             console.log('Response from API call', response && response.data);
             getUrlList(account_email);
         }).catch((error) => {
             isLoadingSpinner(false);
+            triggerMsg('Error from API call');
             console.error('Error from API call', error);
         });
     }
@@ -85,12 +83,14 @@ const UrlList = (props) => {
             url: `/redirect/${urlkey}`,
             withCredentials:true
         }).then((response) => {
+            triggerMsg(initialErrorMsg);
             isLoadingSpinner(false);
             console.log('Response from API call', response && response.data);
             let urlToRedirect = response && response.data;
             window.open(urlToRedirect, '_blank').focus();
         }).catch((error) => {
             isLoadingSpinner(false);
+            triggerMsg('Error from API call');
             console.error('Error from API call', error);
         });
     }
@@ -103,13 +103,15 @@ const UrlList = (props) => {
         axios.request({
             baseURL: 'http://localhost:3010',
             method: 'GET',
-            url: `/search-url`,
+            url: `/search-url/${inputValue}`,
             withCredentials:true
         }).then((response) => {
             isLoadingSpinner(false);
+            triggerMsg(initialErrorMsg);
             inputValue = '';
             console.log('Response from API call', response && response.data);
         }).catch((error) => {
+            triggerMsg('API Error');
             isLoadingSpinner(false);
             console.error('Error from API call', error);
         });
@@ -133,6 +135,8 @@ const UrlList = (props) => {
                 <input type="search" id="search-input" className="form-control rounded" placeholder="Search" aria-label="Search" aria-describedby="search-addon" />
                 <button type="button" id="search-button" className="btn btn-outline-primary" onClick={searchURL}>search</button>
             </div>
+
+            {errorMsg}
 
             {
                 spinner ? <Loader type="Circles" color="#16fffb" height="75" width="100" /> : <div></div>

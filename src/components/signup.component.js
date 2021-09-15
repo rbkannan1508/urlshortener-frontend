@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
+import Loader from 'react-loader-spinner';
 import { userAdded } from '../app/redux/actions';
 import { useDispatch } from 'react-redux';
 
@@ -11,11 +12,14 @@ const initialFormData = Object.freeze({
     password: '',
     account: ''
 });
+const initialErrorMsg = "";
+const isLoading = false;
 
 const Signup = (props) => {
     const dispatch = useDispatch();
     const [formData, updateFormData] = React.useState(initialFormData);
-
+    const [errorMsg, triggerMsg] = React.useState(initialErrorMsg);
+    const [spinner, isLoadingSpinner] = React.useState(isLoading);
     const handleChange = (event) => {
         updateFormData({
             ...formData,
@@ -24,6 +28,7 @@ const Signup = (props) => {
     }
 
     const handleSubmit = (event) => {
+        isLoadingSpinner(true);
         event.preventDefault();
         axios.request({
             baseURL: 'http://localhost:3010',
@@ -38,6 +43,8 @@ const Signup = (props) => {
             },
             withCredentials:true
         }).then((response) => {
+            isLoadingSpinner(false);
+            triggerMsg(initialErrorMsg);
             console.log('Response from API call', response && response.data);
             props.history.push({
                 pathname: '/profile',
@@ -51,6 +58,8 @@ const Signup = (props) => {
             };
             dispatch(userAdded(userDetails));
         }).catch((error) => {
+            isLoadingSpinner(false);
+            triggerMsg('Signup Error');
             console.error('Error from API call', error);
         });
     }
@@ -98,6 +107,12 @@ const Signup = (props) => {
                     <div className="pt-1 mb-4">
                         <button type="submit" className="btn btn-info btn-lg btn-block">Sign Up</button>
                     </div>
+
+                    {errorMsg}
+
+                    {
+                        spinner ? <Loader type="Circles" color="#16fffb" height="75" width="100" /> : <div></div>
+                    }
 
                     <p>Have an account already? <Link to="/" className="link-info">Login</Link></p>
                 </form>
