@@ -131,10 +131,10 @@ const UrlList = (props) => {
             
             <br></br>
 
-            <div className="input-group">
+            {/* <div style={{margin: '50px'}} className="input-group">
                 <input type="search" id="search-input" className="form-control rounded" placeholder="Search" aria-label="Search" aria-describedby="search-addon" />
                 <button type="button" id="search-button" className="btn btn-outline-primary" onClick={searchURL}>search</button>
-            </div>
+            </div> */}
 
             {errorMsg}
 
