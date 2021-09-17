@@ -46,6 +46,7 @@ const UrlList = (props) => {
             triggerMsg(initialErrorMsg);
             console.log('Response from API call', response && response.data);
             let urlList = response.data ? response.data : [];
+            console.log('urlList*', urlList);
             setState(urlList);
         }).catch((error) => {
             isLoadingSpinner(false);
@@ -99,22 +100,29 @@ const UrlList = (props) => {
         const searchInput = document.getElementById('search-input');
         let inputValue = searchInput.value;
         console.log('inputValue', inputValue);
-        isLoadingSpinner(true);
-        axios.request({
-            baseURL: 'http://localhost:3010',
-            method: 'GET',
-            url: `/search-url/${inputValue}`,
-            withCredentials:true
-        }).then((response) => {
-            isLoadingSpinner(false);
-            triggerMsg(initialErrorMsg);
-            inputValue = '';
-            console.log('Response from API call', response && response.data);
-        }).catch((error) => {
-            triggerMsg('API Error');
-            isLoadingSpinner(false);
-            console.error('Error from API call', error);
-        });
+        if(inputValue === null || inputValue === undefined || inputValue === '') {
+            getUrlList(account_email);
+        } else {
+            isLoadingSpinner(true);
+            axios.request({
+                baseURL: 'http://localhost:3010',
+                method: 'GET',
+                url: `/search-url/${inputValue}`,
+                withCredentials:true
+            }).then((response) => {
+                isLoadingSpinner(false);
+                triggerMsg(initialErrorMsg);
+                inputValue = '';
+                console.log('Response from API call', response && response.data);
+                let urlList = response.data ? response.data : [];
+                console.log('urlList', urlList);
+                setState(urlList);
+            }).catch((error) => {
+                triggerMsg('API Error');
+                isLoadingSpinner(false);
+                console.error('Error from API call', error);
+            });
+        }
     }
 
     return(
@@ -131,10 +139,10 @@ const UrlList = (props) => {
             
             <br></br>
 
-            {/* <div style={{margin: '50px'}} className="input-group">
+            <div style={{margin: '50px'}} className="input-group">
                 <input type="search" id="search-input" className="form-control rounded" placeholder="Search" aria-label="Search" aria-describedby="search-addon" />
                 <button type="button" id="search-button" className="btn btn-outline-primary" onClick={searchURL}>search</button>
-            </div> */}
+            </div>
 
             {errorMsg}
 

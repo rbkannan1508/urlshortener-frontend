@@ -12,6 +12,7 @@ const Navigationbar = (props) => {
     const userDetail = useSelector((state) => state.userInfo);
 
     const logoutFunction = () => {
+        console.log('token', Cookies.get('token'));
         Cookies.remove('token');
         clearState();
         props.history.push('/');
